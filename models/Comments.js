@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
-const TweetsSchema = new mongoose.Schema(
+const CommentsSchema = new mongoose.Schema(
   {
     //userId
-    createdBy: {
+    userId: {
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: [true, "MUST PROVIDE user"],
@@ -15,14 +15,13 @@ const TweetsSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, "the tweet can not be more than 1000 characters"],
     },
-
-    Hashtag: {
-      type: String,
-      trim: true,
-      maxlength: [100, "the Hashtag can not be more than 100 characters"],
+    tweetId: {
+      type: mongoose.Types.ObjectId,
+      ref: "Tweets",
+      required: [true, "MUST PROVIDE tweetId"],
     },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Tweet", TweetsSchema);
+module.exports = mongoose.model("Comments", CommentsSchema);

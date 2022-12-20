@@ -43,20 +43,26 @@ const deleteComment = async (req, res) => {
   } = req;
 
   const id = await Comments.findOne({ _id: commentId });
-  if (id.userId != userId) {
-    throw new BadRequestError("a user can only delete tweets that he created");
+  if (id) {
+    if (id.userId != userId) {
+      throw new BadRequestError(
+        "a user can only delete tweets that he created"
+      );
+    }
+
+    const comment = await Comments.findByIdAndRemove({
+      _id: commentId,
+      userId: userId,
+    });
+
+    if (!comment) {
+      throw new NotFoundError(`no comment with id ${commentId}`);
+    }
+
+    res.status(StatusCodes.OK).send();
+  } else {
+    throw new NotFoundError("no comment found");
   }
-
-  const comment = await Comments.findByIdAndRemove({
-    _id: commentId,
-    userId: userId,
-  });
-
-  if (!comment) {
-    throw new NotFoundError(`no comment with id ${tweetId}`);
-  }
-
-  res.status(StatusCodes.OK).send();
 };
 
 module.exports = {

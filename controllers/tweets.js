@@ -1,4 +1,5 @@
 const Tweet = require("../models/Tweets");
+const HiddenTweets = require("../models/HiddenTweets");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
@@ -8,6 +9,21 @@ const getAllTweets = async (req, res) => {
     .limit(Number(pageSize))
     .skip((Number(page) - 1) * Number(pageSize))
     .sort("createdAt");
+
+  const hiddinTweets = await HiddenTweets.find({});
+
+  for (var i = 0; i < tweets.length; i++) {
+    console.log(tweets[i]._id);
+    for (var j = 0; j < hiddinTweets.length; j++) {
+      if (String(tweets[i]._id) === String(hiddinTweets[j].tweetId)) {
+        tweets.splice(i, 1);
+
+        i--;
+        break;
+      }
+    }
+  }
+
   res.status(StatusCodes.OK).json({ tweets });
 };
 
